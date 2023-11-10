@@ -1,0 +1,19 @@
+{
+  "name": "static-wind",
+  "version": "1.0.0",
+  "description": "Static web deploy script to be used along with GitHub Page",
+  "main": "build/build.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LukeNk/Static-Wind.git"
+  },
+  "author": "Luke Nguyen Khanh",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/LukeNk/Static-Wind/issues"
+  },
+  "homepage": "https://github.com/LukeNk/Static-Wind#readme"
+}
