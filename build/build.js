@@ -96,7 +96,7 @@ releaseItems.forEach(item => { // no need to afraid of array length change
             data = data.replace(new RegExp(key, 'g'), trans[key])
         }
 
-        if (lang != 'EN') {
+        if (lang != 'en') {
             fs.mkdirSync(path.join(buildPath, trans.URL)); // default URL lang is English
             releaseItems.push(trans.URL); // add to copy to release
         }
@@ -108,9 +108,6 @@ releaseItems.forEach(item => { // no need to afraid of array length change
 
         fs.rmSync(transPath); // remove from build
     }
-    // TODO: translation buiild
-    // get translation files (FR.json), use regex to replace all matching in dom.window.document.documentElement.outerHTML
-    // after that, put the file name as the language for the URL (based on key "filename" for example)
 });
 
 if (argv[0] !== 'R') {
