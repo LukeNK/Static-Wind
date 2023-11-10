@@ -76,7 +76,13 @@ releaseItems.forEach(item => { // no need to afraid of array length change
         elm.removeAttribute('html-src');
     });
 
-    if (path.extname(item)) return; // is a file, no translation
+    if (path.extname(item))
+        // is a file, no translation, still proceed to copy the content down
+        return fs.writeFileSync(
+            file,
+            dom.window.document.documentElement.outerHTML,
+            'utf-8'
+        )
 
     console.log('- load translation')
     for (const lang of languages) {
