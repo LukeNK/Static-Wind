@@ -5,15 +5,15 @@ const fs = require('fs'),
 const { JSDOM } = jsdom;
 
 const argv = process.argv.slice(2),
+    cPath = path.join('build', 'config.json'), // build config
     vPath = path.join('build', 'VERSION'), // version path OF THE WEBSITE
-    buildPath = path.join('./', 'build/Release'),
-    languages = ['EN', 'VI'],
-    releaseItems = [
-        // items to put in the release folder
-        '.GITIGNORE',
-        'LICENSE'
-    ];
+    buildPath = path.join('build', 'Release');
+
 let version = fs.readFileSync(vPath, 'utf-8').split('.');
+let config = JSON.parse(fs.readFileSync(rPath, 'utf-8'));
+
+const releaseItems = config.releaseItems,
+    languages = config.languages;
 
 if (!fs.existsSync(path.join('build', 'build.js'))) {
     console.error('Not at root folder');
