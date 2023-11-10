@@ -5,7 +5,7 @@
   "main": "build/build.js",
   "scripts": {
     "build": "node Static-Wind/build.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "run": "npx http-server -o ./build/Release"
   },
   "repository": {
     "type": "git",
