@@ -10,7 +10,7 @@ const argv = process.argv.slice(2),
     buildPath = path.join('build', 'Release');
 
 let version = fs.readFileSync(vPath, 'utf-8').split('.');
-let config = JSON.parse(fs.readFileSync(rPath, 'utf-8'));
+let config = JSON.parse(fs.readFileSync(cPath, 'utf-8'));
 
 const releaseItems = config.releaseItems,
     languages = config.languages;
