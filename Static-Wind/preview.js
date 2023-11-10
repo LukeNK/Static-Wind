@@ -1,3 +1,4 @@
+// script to allow pages to build preview without translation
 let COMP_LOAD = document.querySelectorAll("[html-src]").length; // total number of component need to load
 
 (() => {
