@@ -5,9 +5,11 @@ const fs = require('fs'),
 const { JSDOM } = jsdom;
 
 const argv = process.argv.slice(2),
-    cPath = path.join('build', 'config.json'), // build config
-    vPath = path.join('build', 'VERSION'), // version path OF THE WEBSITE
-    buildPath = path.join('build', 'Release');
+    cPath = path.join('Static-Wind', 'config.json'), // build config
+    vPath = path.join('Static-Wind', 'VERSION'), // version path OF THE WEBSITE
+    buildPath = path.join('Static-Wind', 'build');
+
+if (!fs.existsSync(vPath)) fs.writeFileSync(vPath, '0.0', 'utf-8'); // create placeholder
 
 let version = fs.readFileSync(vPath, 'utf-8').split('.');
 let config = JSON.parse(fs.readFileSync(cPath, 'utf-8'));
@@ -15,7 +17,7 @@ let config = JSON.parse(fs.readFileSync(cPath, 'utf-8'));
 const releaseItems = config.releaseItems,
     languages = config.languages;
 
-if (!fs.existsSync(path.join('build', 'build.js'))) {
+if (!fs.existsSync(path.join('Static-Wind', 'build.js'))) {
     console.error('Not at root folder');
     process.exit(1);
 }

@@ -1,0 +1,8 @@
+# Build release
+build
+
+# Configs
+config.json
+
+# Version count is for the website, not the script
+VERSION
