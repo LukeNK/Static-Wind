@@ -15,7 +15,7 @@ const argv = process.argv.slice(2),
     ];
 let version = fs.readFileSync(vPath, 'utf-8').split('.');
 
-if (fs.existsSync(path.join('build', 'build.js'))) {
+if (!fs.existsSync(path.join('build', 'build.js'))) {
     console.error('Not at root folder');
     process.exit(1);
 }
