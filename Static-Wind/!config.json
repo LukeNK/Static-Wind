@@ -1,6 +1,7 @@
 {
     "languages": ["en", "vi"],
+    "masterTranslation": "Path to the folder where all translations in that folder will be applied for the entire website.",
     "releaseItems": [
-
+        "Path to folder/files that need to be released"
     ]
 }
