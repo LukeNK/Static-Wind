@@ -46,6 +46,18 @@ if (fs.existsSync(buildPath))
     fs.rmSync(buildPath, { recursive: true, force: true })
 fs.mkdirSync(buildPath, { recursive: true });
 
+if (typeof(config?.masterTranslation) == 'string') {
+    console.log('\nMaster translation folder specified');
+    let dirName = config.masterTranslation;
+    config.masterTranslation = {};
+    for (const lang of languages)
+        config.masterTranslation[lang] =
+            JSON.parse(fs.readFileSync(
+                path.join(dirName, lang + '.json'),
+                'utf-8'
+            ))
+}
+
 console.log('\nCopy and build files');
 releaseItems.forEach(item => { // no need to afraid of array length change
     console.log(item)
@@ -103,6 +115,13 @@ releaseItems.forEach(item => { // no need to afraid of array length change
             if (['URL'].includes(key)) continue; // skip certain key
             data = data.replace(new RegExp(key, 'g'), trans[key])
         }
+
+        if (config.masterTranslation)
+            for (const key of Object.keys(config.masterTranslation[lang]))
+                data = data.replace(
+                    new RegExp(key, 'g'),
+                    config.masterTranslation[lang][key]
+                )
 
         if (lang != 'en') {
             fs.mkdirSync(path.join(buildPath, trans.URL)); // default URL lang is English
