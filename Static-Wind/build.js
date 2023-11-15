@@ -111,6 +111,9 @@ releaseItems.forEach(item => { // no need to afraid of array length change
                 'utf-8'
             ))
 
+        // insert language code
+        trans.lang_code = lang;
+
         for (const key of Object.keys(trans)) {
             if (['URL'].includes(key)) continue; // skip certain key
             data = data.replace(new RegExp(key, 'g'), trans[key])
