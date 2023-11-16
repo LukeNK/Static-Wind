@@ -33,12 +33,7 @@ if (argv[0] === 'R') {
     )
 
     console.log('Executing Git')
-    console.log(execSync('git pull && git add .', { encoding: 'utf-8' }));
-    console.log(execSync(
-        `git commit -m "[Auto-commit->main] v${version.join('.')} release"`,
-        { encoding: 'utf-8' })
-    );
-    console.log(execSync('git push', { encoding: 'utf-8' }));
+    console.log(execSync('git pull', { encoding: 'utf-8' }));
 }
 
 console.log('Cleaning ' + buildPath)
