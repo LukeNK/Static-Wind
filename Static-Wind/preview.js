@@ -6,18 +6,17 @@
         elm.innerHTML = res + elm.innerHTML; // do not over write file
     }
 
-    // If page already has the translation, skip this preview
+    // If page already has the translation, skip this setting translation
     try {
         // check if the language code is correct
         Intl.getCanonicalLocales(document.body.parentElement.lang);
-        console.log('Loading translation');
-
-        let data = document.body.parentElement.outerHTML,
-            trans = await fetch('./en.json').then(res => res.json());
+        console.log('Page already has the proper language');
+    } catch(err) {
+        console.log('Translation existed');
+        let data = document.body.outerHTML,
+        trans = await fetch('./en.json').then(res => res.json());
         for (key of Object.keys(trans))
             data = data.replace(new RegExp(key, 'g'), trans[key])
-        document.body.parentElement.outerHTML = data;
-    } catch(err) {
-        console.log('Translation existed')
+        document.body.outerHTML = data;
     }
 })();
