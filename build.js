@@ -64,7 +64,7 @@ releaseItems.forEach(item => { // no need to afraid of array length change
     let itemPath = path.join('../', item),
         file = path.join(buildPath, item);
 
-    // only copy root folder/ files
+    // only copy root folder or files
     if (path.basename(item) === item)
         fs.cpSync(itemPath, path.join(buildPath, item), { recursive: true });
     else
