@@ -5,9 +5,9 @@ const fs = require('fs'),
 const { JSDOM } = jsdom;
 
 const argv = process.argv.slice(2),
-    cPath = path.join('Static-Wind', 'config.json'), // build config
-    vPath = path.join('Static-Wind', 'VERSION'), // version path OF THE WEBSITE
-    buildPath = path.join('Static-Wind', 'build');
+    cPath = 'config.json', // build config
+    vPath = 'VERSION', // version path OF THE WEBSITE
+    buildPath = 'build';
 
 if (!fs.existsSync(vPath)) fs.writeFileSync(vPath, '0.0', 'utf-8'); // create placeholder
 
@@ -17,7 +17,7 @@ let config = JSON.parse(fs.readFileSync(cPath, 'utf-8'));
 const releaseItems = config.releaseItems,
     languages = config.languages;
 
-if (!fs.existsSync(path.join('Static-Wind', 'build.js'))) {
+if (!fs.existsSync('build.js')) {
     console.error('Not at root folder');
     process.exit(1);
 }
@@ -37,13 +37,17 @@ if (argv[0] === 'R') {
 }
 
 console.log('Cleaning ' + buildPath)
-if (fs.existsSync(buildPath))
-    fs.rmSync(buildPath, { recursive: true, force: true })
-fs.mkdirSync(buildPath, { recursive: true });
+if (fs.existsSync(buildPath)) {
+    let allItems = fs.readdirSync(buildPath);
+    for (const item of allItems) {
+        if (item == '.git') continue;
+        fs.rmSync(path.join(buildPath, item), { recursive: true, force: true })
+    }
+}
 
 if (typeof(config?.masterTranslation) == 'string') {
     console.log('\nMaster translation folder specified');
-    let dirName = config.masterTranslation;
+    let dirName = path.join('../', config.masterTranslation);
     config.masterTranslation = {};
     for (const lang of languages)
         config.masterTranslation[lang] =
@@ -55,16 +59,18 @@ if (typeof(config?.masterTranslation) == 'string') {
 
 console.log('\nCopy and build files');
 releaseItems.forEach(item => { // no need to afraid of array length change
-    console.log(item)
+    console.log(item);
+
+    let itemPath = path.join('../', item),
+        file = path.join(buildPath, item);
 
     // only copy root folder/ files
     if (path.basename(item) === item)
-        fs.cpSync(item, path.join(buildPath, item), { recursive: true });
+        fs.cpSync(itemPath, path.join(buildPath, item), { recursive: true });
     else
         console.log('- sub-folder')
 
-    let file = path.join(buildPath, item);
-    if (fs.statSync(item).isDirectory())
+    if (fs.statSync(itemPath).isDirectory())
         file = path.join(file, 'index.html')
 
     if (!fs.existsSync(file)) return console.log('- index.html not available')
@@ -77,7 +83,7 @@ releaseItems.forEach(item => { // no need to afraid of array length change
     dom.window.document.querySelectorAll('[html-src]').forEach(elm => {
         elm.innerHTML =
             fs.readFileSync(path.join(
-                './',
+                '../',
                 elm.getAttribute('html-src')
             )) + elm.innerHTML;
         elm.removeAttribute('html-src');
@@ -91,7 +97,7 @@ releaseItems.forEach(item => { // no need to afraid of array length change
             'utf-8'
         )
 
-    console.log('- load translation')
+    console.log('- load translation');
     for (const lang of languages) {
         let data = dom.window.document.documentElement.outerHTML;
 
@@ -140,27 +146,14 @@ if (argv[0] !== 'R') {
     process.exit(0);
 }
 
-console.log('\nChange branch');
-console.log(execSync('git checkout Release', { encoding: 'utf-8' }));
-
-console.log('Removing and moving files');
-releaseItems.forEach(item => {
-    console.log('Removing and moving ' + item);
-    fs.rmSync(item, { recursive: true, force: true })
-    fs.renameSync(path.join(buildPath, item), item, { recursive: true });
-});
-
 console.log('\nGit add all changes');
-console.log(execSync('git add .', { encoding: 'utf-8' }));
+console.log(execSync('cd build && git add .', { encoding: 'utf-8' }));
 
 console.log('Git commit');
 console.log(execSync(
-    `git commit -m "[Auto-commit->Release] v${version.join('.')}"`,
+    `cd build && git commit -m "[Auto-commit] v${version.join('.')}"`,
     { encoding: 'utf-8' })
 );
 
 console.log('Git push');
-console.log(execSync('git push', { encoding: 'utf-8' }));
-
-console.log('Git return to main branch');
-console.log(execSync('git checkout main', { encoding: 'utf-8' }));
+console.log(execSync('cd build && git push', { encoding: 'utf-8' }));

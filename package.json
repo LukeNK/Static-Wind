@@ -1,12 +1,12 @@
 {
   "name": "static-wind",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "Static web deploy script to be used along with GitHub Page",
   "main": "build/build.js",
   "scripts": {
-    "servePreview": "npx http-server -o ./",
-    "build": "node Static-Wind/build.js",
-    "serveBuild": "cd ./Static-wind/build && npx http-server -o ./",
+    "servePreview": "cd ../ && npx http-server ./",
+    "build": "node build.js",
+    "serveBuild": "cd ./build && npx http-server ./",
     "test": "npm run build && npm run serveBuild"
   },
   "repository": {
