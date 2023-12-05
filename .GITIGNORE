@@ -1,6 +1,15 @@
 # Custom addition
 package-lock.json
 
+# Build release
+build
+
+# Configs
+config.json
+
+# Version count is for the website, not the script
+VERSION
+
 # Logs
 logs
 *.log
