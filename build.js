@@ -85,7 +85,8 @@ releaseItems.forEach(item => { // no need to afraid of array length change
             fs.readFileSync(path.join(
                 '../',
                 elm.getAttribute('html-src')
-            )) + elm.innerHTML;
+            ))
+            + elm.innerHTML;
         elm.removeAttribute('html-src');
     });
 
@@ -127,8 +128,10 @@ releaseItems.forEach(item => { // no need to afraid of array length change
                     config.masterTranslation[lang][key]
                 )
 
-        if (lang != 'en') {
-            fs.mkdirSync(path.join(buildPath, trans.URL)); // default URL lang is English
+        if (lang != languages[0]) {
+            // Default language already have its folder as the source folder
+            // Therefore we need to create a new folder for translated files
+            fs.mkdirSync(path.join(buildPath, trans.URL));
             releaseItems.push(trans.URL); // add to copy to release
         }
         fs.writeFileSync(
