@@ -14,9 +14,15 @@
     } catch(err) {
         console.log('Translation existed');
         let data = document.body.outerHTML,
-        trans = await fetch('./en.json').then(res => res.json());
+            config = await fetch('/Static-Wind/config.json')
+                .then(res => res.json());
+
+        // load default language
+        let trans = await fetch(`./${config.languages[0]}.json`)
+            .then(res => res.json());
+
         for (key of Object.keys(trans))
-            data = data.replace(new RegExp(key, 'g'), trans[key])
+            data = data.replace(new RegExp(key, 'g'), trans[key]);
         document.body.outerHTML = data;
     }
 })();
