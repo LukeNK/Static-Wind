@@ -133,7 +133,12 @@ releaseItems.forEach(item => { // no need to afraid of array length change
             // Therefore we need to create a new folder for translated files
             fs.mkdirSync(path.join(buildPath, trans.URL));
             releaseItems.push(trans.URL); // add to copy to release
+        } else if (!trans.URL) {
+            // if it is main language and there is no URL specified
+            // then make the default URL is the original folder
+            trans.URL = item;
         }
+
         fs.writeFileSync(
             path.join(buildPath, trans.URL, 'index.html'),
             data,

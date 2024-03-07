@@ -1,6 +1,6 @@
 {
   "name": "static-wind",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Static web deploy script to be used along with GitHub Page",
   "main": "build/build.js",
   "scripts": {
