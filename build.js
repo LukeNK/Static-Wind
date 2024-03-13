@@ -58,7 +58,7 @@ if (typeof(config?.masterTranslation) == 'string') {
 }
 
 console.log('\nCopy and build files');
-releaseItems.forEach(item => { // no need to afraid of array length change
+releaseItems.forEach(item => {
     console.log(item);
 
     let itemPath = path.join('../', item),
@@ -80,7 +80,8 @@ releaseItems.forEach(item => { // no need to afraid of array length change
 
     // replace comp to static element
     let dom = new JSDOM(fs.readFileSync(file, 'utf-8'));
-    dom.window.document.querySelectorAll('[html-src]').forEach(elm => {
+    dom.window.document.querySelectorAll('[html-src]')
+    .forEach(elm => {
         elm.innerHTML =
             fs.readFileSync(path.join(
                 '../',
@@ -89,6 +90,10 @@ releaseItems.forEach(item => { // no need to afraid of array length change
             + elm.innerHTML;
         elm.removeAttribute('html-src');
     });
+
+    // remove preview script if exists
+    dom.window.document.querySelector('script[src="/Static-Wind/preview.js"]')
+    .remove();
 
     if (path.extname(item))
         // is a file, no translation, still proceed to copy the content down
