@@ -37,13 +37,14 @@ if (argv[0] === 'R') {
 }
 
 console.log('Cleaning ' + buildPath)
-if (fs.existsSync(buildPath)) {
-    let allItems = fs.readdirSync(buildPath);
-    for (const item of allItems) {
-        if (item == '.git') continue;
+if (fs.existsSync(buildPath))
+    for (const item of fs.readdirSync(buildPath)) {
+        if (
+            item == '.git'
+            || releaseItems.includes(item) // if it is for release, only edit
+        ) continue;
         fs.rmSync(path.join(buildPath, item), { recursive: true, force: true })
     }
-}
 
 if (typeof(config?.masterTranslation) == 'string') {
     console.log('\nMaster translation folder specified');
