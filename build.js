@@ -154,6 +154,17 @@ releaseItems.forEach(item => {
     }
 });
 
+if (config.sitemap) {
+    let sitemap = path.join(
+            buildPath,
+            config.sitemapPath || 'sitemap.txt' // user specified or default
+        ),
+        out = '';
+    console.log('\nGenerating sitemap at ' + sitemap)
+    for (const item of releaseItems) out += config.sitemap + item + '\n';
+    fs.writeFileSync(sitemap, out, 'utf-8')
+}
+
 if (argv[0] !== 'R') {
     console.log('\nNo release flag, build completed');
     process.exit(0);
