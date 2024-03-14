@@ -93,7 +93,7 @@ releaseItems.forEach(item => {
 
     // remove preview script if exists
     dom.window.document.querySelector('script[src="/Static-Wind/preview.js"]')
-    .remove();
+    ?.remove();
 
     if (path.extname(item))
         // is a file, no translation, still proceed to copy the content down
