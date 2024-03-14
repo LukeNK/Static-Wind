@@ -58,7 +58,7 @@ if (typeof(config?.masterTranslation) == 'string') {
 }
 
 console.log('\nCopy and build files');
-releaseItems.forEach(item => {
+releaseItems.forEach((item, key) => {
     console.log(item);
 
     let itemPath = path.join('../', item),
@@ -73,8 +73,13 @@ releaseItems.forEach(item => {
     if (fs.statSync(itemPath).isDirectory())
         file = path.join(file, 'index.html')
 
-    if (!fs.existsSync(file)) return console.log('- index.html not available')
-    if (path.extname(file) !== '.html') return; // not an HTML object to build
+    if (
+        !fs.existsSync(file)
+        || path.extname(file) !== '.html'
+    ) {
+        releaseItems[key] = '';
+        return console.log('- not an HTML object to build')
+    };
 
     console.log('- is/contains a HTML file')
 
@@ -161,7 +166,9 @@ if (config.sitemap) {
         ),
         out = '';
     console.log('\nGenerating sitemap at ' + sitemap)
-    for (const item of releaseItems) out += config.sitemap + item + '\n';
+    for (const item of releaseItems)
+        if (item) // if items exists and is allowed in sitemap
+            out += config.sitemap + item + '\n';
     fs.writeFileSync(sitemap, out, 'utf-8')
 }
 
