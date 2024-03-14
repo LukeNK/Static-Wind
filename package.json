@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LukeNk/Static-Wind.git"
+    "url": "git+https://github.com/LukeNK/Static-Wind.git"
   },
   "author": "Luke Nguyen Khanh",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/LukeNk/Static-Wind/issues"
+    "url": "https://github.com/LukeNK/Static-Wind/issues"
   },
-  "homepage": "https://github.com/LukeNk/Static-Wind#readme",
+  "homepage": "https://github.com/LukeNK/Static-Wind#readme",
   "dependencies": {
     "jsdom": "^22.1.0"
   }
