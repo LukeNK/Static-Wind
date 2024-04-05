@@ -1,6 +1,6 @@
 {
   "name": "static-wind",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Static web deploy script to be used along with GitHub Page",
   "main": "build/build.js",
   "scripts": {
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/LukeNK/Static-Wind#readme",
   "dependencies": {
+    "html-minifier": "^4.0.0",
     "jsdom": "^22.1.0"
   }
 }

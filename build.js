@@ -1,7 +1,8 @@
 const fs = require('fs'),
     path = require('path'),
     execSync = require('child_process').execSync,
-    jsdom = require("jsdom");
+    jsdom = require("jsdom"),
+    minify = require('html-minifier').minify;
 const { JSDOM } = jsdom;
 
 const argv = process.argv.slice(2),
@@ -152,7 +153,12 @@ releaseItems.forEach((item, key) => {
 
         fs.writeFileSync(
             path.join(buildPath, trans.URL, 'index.html'),
-            data,
+            minify(data, {
+                collapseWhitespace: true,
+                minifyCSS: true,
+                minifyJS: true,
+                removeComments: true,
+            }),
             'utf-8'
         );
 
