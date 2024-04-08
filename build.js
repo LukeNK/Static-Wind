@@ -24,7 +24,7 @@ config.minify =
         minifyCSS: true,
         minifyJS: true,
         removeComments: true,
-    }
+    };
 
 if (!fs.existsSync('build.js')) {
     console.error('Not at root folder');
