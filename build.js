@@ -34,7 +34,8 @@ if (!fs.existsSync('build.js')) {
 if (argv[0] === 'R') {
     console.log('Release flag, increasing version');
     let curYear = new Date().getFullYear().toString().slice(2);
-    if (version[0] != curYear) version[1] = 0; // new year, new code
+    if (~~version[0] != ~~curYear)
+        version[1] = 0; // new year, new code
     version[1] = ((~~version[1]) + 1).toString().padStart(3, '0')
     fs.writeFileSync(
         vPath,
