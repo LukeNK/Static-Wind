@@ -10,6 +10,7 @@ Git ignore the folder `Static-Wind`, then clone Static Wind into that folder. St
     - `index.html`: this file will contain the layout and translation keys
     - `en.json`: basic English interpretation of the key
     - `<lang_code>.json`: translation of the language
+    - `build.js`: scripts to call when building
 
 There are two options to view your webpage from here:
 - Build the webpage with `npm run build`, which then the result will be in the Git-ignored folder `Static-Wind/build`; or

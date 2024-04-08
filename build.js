@@ -1,22 +1,30 @@
 const fs = require('fs'),
     path = require('path'),
     execSync = require('child_process').execSync,
-    jsdom = require("jsdom"),
+    { JSDOM } = require("jsdom"),
     minify = require('html-minifier').minify;
-const { JSDOM } = jsdom;
 
 const argv = process.argv.slice(2),
     cPath = 'config.json', // build config
     vPath = 'VERSION', // version path OF THE WEBSITE
     buildPath = 'build';
 
-if (!fs.existsSync(vPath)) fs.writeFileSync(vPath, '0.0', 'utf-8'); // create placeholder
+if (!fs.existsSync(vPath))
+    fs.writeFileSync(vPath, '0.0', 'utf-8'); // create placeholder
 
 let version = fs.readFileSync(vPath, 'utf-8').split('.');
 let config = JSON.parse(fs.readFileSync(cPath, 'utf-8'));
 
 const releaseItems = config.releaseItems,
     languages = config.languages;
+config.minify =
+    config.minify
+    || {
+        collapseWhitespace: true,
+        minifyCSS: true,
+        minifyJS: true,
+        removeComments: true,
+    }
 
 if (!fs.existsSync('build.js')) {
     console.error('Not at root folder');
@@ -106,22 +114,22 @@ releaseItems.forEach((item, key) => {
         // is a file, no translation, still proceed to copy the content down
         return fs.writeFileSync(
             file,
-            dom.window.document.documentElement.outerHTML,
+            minify(dom.window.document.documentElement.outerHTML, config.minify),
             'utf-8'
         )
 
-    console.log('- load translation');
+    console.log('- load translations');
     for (const lang of languages) {
         let data = dom.window.document.documentElement.outerHTML;
 
         // translation file
-        let transPath = path.join(path.dirname(file), lang + '.json');
-        if (!fs.existsSync(transPath)) {
+        let transFile = path.join(path.dirname(file), lang + '.json');
+        if (!fs.existsSync(transFile)) {
             console.log('- ' + lang + ' translation is not available')
             continue;
         }
         let trans = JSON.parse(fs.readFileSync(
-                transPath,
+                transFile,
                 'utf-8'
             ))
 
@@ -140,29 +148,25 @@ releaseItems.forEach((item, key) => {
                     config.masterTranslation[lang][key]
                 )
 
-        if (lang != languages[0]) {
-            // Default language already have its folder as the source folder
-            // Therefore we need to create a new folder for translated files
-            fs.mkdirSync(path.join(buildPath, trans.URL));
+        // translation URL does not exit, specify as the default directory
+        if (!trans.URL) trans.URL = item;
+
+        let outputDir = path.join(buildPath, trans.URL); // output directory
+        if (
+            file != outputDir // if the current folder is not the original folder
+            && !fs.existsSync(outputDir) // and the folder does not exist
+        ) {
+            fs.mkdirSync(outputDir)
             releaseItems.push(trans.URL); // add to copy to release
-        } else if (!trans.URL) {
-            // if it is main language and there is no URL specified
-            // then make the default URL is the original folder
-            trans.URL = item;
         }
 
         fs.writeFileSync(
-            path.join(buildPath, trans.URL, 'index.html'),
-            minify(data, {
-                collapseWhitespace: true,
-                minifyCSS: true,
-                minifyJS: true,
-                removeComments: true,
-            }),
+            path.join(outputDir, 'index.html'),
+            minify(data, config.minify),
             'utf-8'
         );
 
-        fs.rmSync(transPath); // remove from build
+        fs.rmSync(transFile); // remove from build
     }
 });
 
