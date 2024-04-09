@@ -88,7 +88,7 @@ releaseItems.forEach((item, key) => {
         !fs.existsSync(file)
         || path.extname(file) !== '.html'
     ) {
-        releaseItems[key] = '';
+        releaseItems[key] = ''; // remove from sitemap
         return console.log('- not an HTML object to build')
     };
 
