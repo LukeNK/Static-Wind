@@ -68,20 +68,36 @@ if (typeof(config?.masterTranslation) == 'string') {
             ))
 }
 
-console.log('\nCopy and build files');
+let buildScript = path.join('../', config.buildScript);
+if (
+    config.buildScript
+    && fs.existsSync(buildScript)) {
+    console.log('- build script exists')
+    buildScript = require(buildScript);
+}
+
+console.log('\nCopy release items')
 releaseItems.forEach((item, key) => {
+    fs.cpSync(
+        path.join('../', item),
+        path.join(buildPath, item),
+        { recursive: true }
+    );
+});
+
+if (buildScript?.onBuild) {
+    console.log('+ onBuild');
+    buildScript.onBuild(config);
+}
+
+console.log('\nBuild release items');
+for (let key in releaseItems) {
+    let item = releaseItems[key];
     console.log(item);
 
-    let itemPath = path.join('../', item),
-        file = path.join(buildPath, item);
+    let file = path.join(buildPath, item);
 
-    // only copy root folder or files
-    if (path.basename(item) === item)
-        fs.cpSync(itemPath, path.join(buildPath, item), { recursive: true });
-    else
-        console.log('- sub-folder')
-
-    if (fs.statSync(itemPath).isDirectory())
+    if (fs.statSync(file).isDirectory())
         file = path.join(file, 'index.html')
 
     if (
@@ -89,7 +105,8 @@ releaseItems.forEach((item, key) => {
         || path.extname(file) !== '.html'
     ) {
         releaseItems[key] = ''; // remove from sitemap
-        return console.log('- not an HTML object to build')
+        console.log('- not an HTML object to build');
+        continue
     };
 
     console.log('- is/contains a HTML file')
@@ -111,13 +128,15 @@ releaseItems.forEach((item, key) => {
     dom.window.document.querySelector('script[src="/Static-Wind/preview.js"]')
     ?.remove();
 
-    if (path.extname(item))
+    if (path.extname(item)) {
         // is a file, no translation, still proceed to copy the content down
-        return fs.writeFileSync(
+        fs.writeFileSync(
             file,
             minify(dom.window.document.documentElement.outerHTML, config.minify),
             'utf-8'
-        )
+        );
+        continue
+    }
 
     console.log('- load translations');
     for (const lang of languages) {
@@ -169,7 +188,7 @@ releaseItems.forEach((item, key) => {
 
         fs.rmSync(transFile); // remove from build
     }
-});
+}
 
 if (config.sitemap) {
     let sitemap = path.join(
