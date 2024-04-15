@@ -27,7 +27,7 @@ config.minify =
     };
 
 if (!fs.existsSync('build.js')) {
-    console.error('Not at root folder');
+    console.error('Not at Static-Wind folder');
     process.exit(1);
 }
 
@@ -85,15 +85,12 @@ releaseItems.forEach((item, key) => {
     );
 });
 
-if (buildScript?.onBuild) {
-    console.log('+ onBuild');
+if (buildScript?.onBuild)
     buildScript.onBuild(config);
-}
 
 console.log('\nBuild release items');
 for (let key in releaseItems) {
     let item = releaseItems[key];
-    console.log(item);
 
     let file = path.join(buildPath, item);
 
@@ -104,17 +101,14 @@ for (let key in releaseItems) {
         !fs.existsSync(file)
         || path.extname(file) !== '.html'
     ) {
+        // not an HTML object to build
         releaseItems[key] = ''; // remove from sitemap
-        console.log('- not an HTML object to build');
         continue
     };
 
-    console.log('- is/contains a HTML file')
-
-    // replace comp to static element
+    // replace components to static element
     let dom = new JSDOM(fs.readFileSync(file, 'utf-8'));
-    dom.window.document.querySelectorAll('[html-src]')
-    .forEach(elm => {
+    dom.window.document.querySelectorAll('[html-src]').forEach(elm => {
         elm.innerHTML =
             fs.readFileSync(path.join(
                 '../',
@@ -130,6 +124,7 @@ for (let key in releaseItems) {
 
     if (path.extname(item)) {
         // is a file, no translation, still proceed to copy the content down
+        console.warn(`- ${item} no translation available`);
         fs.writeFileSync(
             file,
             minify(dom.window.document.documentElement.outerHTML, config.minify),
@@ -138,14 +133,16 @@ for (let key in releaseItems) {
         continue
     }
 
-    console.log('- load translations');
+    if (buildScript?.onTranslationBuild)
+        buildScript.onTranslationBuild(dom.window.document, item, config);
+
     for (const lang of languages) {
         let data = dom.window.document.documentElement.outerHTML;
 
         // translation file
         let transFile = path.join(path.dirname(file), lang + '.json');
         if (!fs.existsSync(transFile)) {
-            console.log('- ' + lang + ' translation is not available')
+            console.warn(`- ${item} ${lang} translation is not available`)
             continue;
         }
         let trans = JSON.parse(fs.readFileSync(
