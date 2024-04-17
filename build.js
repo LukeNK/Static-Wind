@@ -49,10 +49,7 @@ if (argv[0] === 'R') {
 console.log('Cleaning ' + buildPath)
 if (fs.existsSync(buildPath))
     for (const item of fs.readdirSync(buildPath)) {
-        if (
-            item == '.git'
-            || releaseItems.includes(item) // if it is for release, only edit
-        ) continue;
+        if (item == '.git') continue;
         fs.rmSync(path.join(buildPath, item), { recursive: true, force: true })
     }
 
