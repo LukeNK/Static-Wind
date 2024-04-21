@@ -203,13 +203,13 @@ if (argv[0] !== 'R') {
 }
 
 console.log('Git add all changes');
-console.log(execSync('cd build && git add .', { encoding: 'utf-8' }));
+console.log(execSync(`cd ${buildPath} && git add .`, { encoding: 'utf-8' }));
 
 console.log('Git commit');
 console.log(execSync(
-    `cd build && git commit -m "[Auto-commit] v${version.join('.')}"`,
+    `cd ${buildPath} && git commit -m "[Auto-commit] v${version.join('.')}"`,
     { encoding: 'utf-8' })
 );
 
 console.log('Git push');
-console.log(execSync('cd build && git push', { encoding: 'utf-8' }));
+console.log(execSync(`cd ${buildPath} && git push`, { encoding: 'utf-8' }));
