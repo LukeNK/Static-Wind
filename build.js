@@ -54,7 +54,7 @@ if (fs.existsSync(buildPath))
     }
 
 if (typeof(config?.masterTranslation) == 'string') {
-    console.log('\nMaster translation folder specified');
+    console.log('Master translation folder specified');
     let dirName = path.join('../', config.masterTranslation);
     config.masterTranslation = {};
     for (const lang of languages)
@@ -69,11 +69,11 @@ let buildScript = path.join('../', config.buildScript);
 if (
     config.buildScript
     && fs.existsSync(buildScript)) {
-    console.log('- build script exists')
+    console.log('Build script exists')
     buildScript = require(buildScript);
 }
 
-console.log('\nCopy release items')
+console.log('Copy release items')
 releaseItems.forEach((item, key) => {
     fs.cpSync(
         path.join('../', item),
@@ -85,7 +85,7 @@ releaseItems.forEach((item, key) => {
 if (buildScript?.onBuild)
     buildScript.onBuild(config);
 
-console.log('\nBuild release items');
+console.log('Build release items');
 for (let key in releaseItems) {
     let item = releaseItems[key];
 
@@ -190,19 +190,19 @@ if (config.sitemap) {
             config.sitemapPath || 'sitemap.txt' // user specified or default
         ),
         out = '';
-    console.log('\nGenerating sitemap at ' + sitemap)
+    console.log('Generating sitemap at ' + sitemap)
     for (const item of releaseItems)
         if (item) // if items exists and is allowed in sitemap
-            out += config.sitemap + item + '\n';
+            out += config.sitemap + item + '';
     fs.writeFileSync(sitemap, out, 'utf-8')
 }
 
 if (argv[0] !== 'R') {
-    console.log('\nNo release flag, build completed');
+    console.log('No release flag, build completed');
     process.exit(0);
 }
 
-console.log('\nGit add all changes');
+console.log('Git add all changes');
 console.log(execSync('cd build && git add .', { encoding: 'utf-8' }));
 
 console.log('Git commit');
