@@ -193,7 +193,7 @@ if (config.sitemap) {
     console.log('Generating sitemap at ' + sitemap)
     for (const item of releaseItems)
         if (item) // if items exists and is allowed in sitemap
-            out += config.sitemap + item + '';
+            out += config.sitemap + item + '\n';
     fs.writeFileSync(sitemap, out, 'utf-8')
 }
 
