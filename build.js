@@ -85,6 +85,7 @@ releaseItems.forEach((item, key) => {
 if (buildScript?.onBuild) buildScript.onBuild(config);
 
 console.log('Build release items');
+config.doctype = config.doctype || '<!DOCTYPE html>';
 for (let key in releaseItems) {
     let item = releaseItems[key];
 
@@ -124,7 +125,7 @@ for (let key in releaseItems) {
         fs.writeFileSync(
             file,
             minify(
-                dom.window.document.doctype + dom.window.document.documentElement.outerHTML,
+                config.doctype + dom.window.document.documentElement.outerHTML,
                 config.minify
             ),
             'utf-8'
@@ -137,7 +138,7 @@ for (let key in releaseItems) {
 
     for (const lang of languages) {
         let data =
-            dom.window.document.doctype
+            config.doctype
             + dom.window.document.documentElement.outerHTML;
 
         // translation file
