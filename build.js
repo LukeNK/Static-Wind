@@ -123,7 +123,10 @@ for (let key in releaseItems) {
         console.warn(`- ${item} no translation available`);
         fs.writeFileSync(
             file,
-            minify(dom.window.document.documentElement.outerHTML, config.minify),
+            minify(
+                dom.window.document.doctype + dom.window.document.documentElement.outerHTML,
+                config.minify
+            ),
             'utf-8'
         );
         continue
@@ -133,7 +136,9 @@ for (let key in releaseItems) {
         buildScript.onTranslationBuild(dom.window.document, item, config);
 
     for (const lang of languages) {
-        let data = dom.window.document.documentElement.outerHTML;
+        let data =
+            dom.window.document.doctype
+            + dom.window.document.documentElement.outerHTML;
 
         // translation file
         let transFile = path.join(path.dirname(file), lang + '.json');
