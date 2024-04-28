@@ -37,10 +37,10 @@ if (argv[0] === 'R') {
     if (~~version[0] != ~~curYear)
         version[1] = 0; // new year, new code
     version[1] = ((~~version[1]) + 1).toString().padStart(3, '0')
-    fs.writeFileSync(
-        vPath,
-        version.join('.')
-    )
+
+    // save to config, indicating this is a release
+    config.release = version.join('.');
+    fs.writeFileSync(vPath, config.release)
 
     console.log('Executing Git')
     console.log(execSync('git pull', { encoding: 'utf-8' }));
@@ -82,8 +82,7 @@ releaseItems.forEach((item, key) => {
     );
 });
 
-if (buildScript?.onBuild)
-    buildScript.onBuild(config);
+if (buildScript?.onBuild) buildScript.onBuild(config);
 
 console.log('Build release items');
 for (let key in releaseItems) {
@@ -197,7 +196,9 @@ if (config.sitemap) {
     fs.writeFileSync(sitemap, out, 'utf-8')
 }
 
-if (argv[0] !== 'R') {
+if (buildScript?.onBuildComplete) buildScript.onBuildComplete(config);
+
+if (!config.release) {
     console.log('No release flag, build completed');
     process.exit(0);
 }

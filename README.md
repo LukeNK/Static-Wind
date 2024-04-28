@@ -36,8 +36,9 @@ There is also a special key called `lang_code`, which Static Wind will automatic
 
 ### Build script
 You can insert your own functions when the script is building the page.
-1. `onBuild(config)`: after the files are copied into the build folder but before starting building individual files
-2. `onTranslationBuild(dom, item, config)`: after the targeting item was built with html-src but before building each individual translation.
+1. `onBuild(config)`: after the files are copied into the build folder but before starting building individual files.
+1. `onTranslationBuild(dom, item, config)`: after the targeting item was built with html-src but before building each individual translation.
+1. `onBuildComplete(config)`: after the build is compelte but before releasing (if the release flag is present)
 
 ## Reasons you DON'T want to use this script
 If you can come up with a reason that specifically addresses your problem, usually it is better than using Static Wind. Static Wind was created as a one-size-fit-all solution, hence reducing the need to learn multiple frameworks or libraries to work; however, at the same time it has some specific requirements: it must be on GitHub, the attribute must be named `html-src`, and so on. These are weirdly specific but at the same time general, so it might not be suitable for you in that case.
