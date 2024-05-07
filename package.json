@@ -21,6 +21,6 @@
   "homepage": "https://github.com/LukeNK/Static-Wind#readme",
   "dependencies": {
     "html-minifier": "^4.0.0",
-    "jsdom": "^22.1.0"
+    "pug": "^3.0.2"
   }
 }

@@ -1,7 +1,7 @@
 const fs = require('fs'),
     path = require('path'),
     execSync = require('child_process').execSync,
-    { JSDOM } = require("jsdom"),
+    pug = require('pug'),
     minify = require('html-minifier').minify;
 
 const argv = process.argv.slice(2),
@@ -86,18 +86,17 @@ releaseItems.forEach((item, key) => {
 if (buildScript?.onBuild) buildScript.onBuild(config);
 
 console.log('Build release items');
-config.doctype = config.doctype || '<!DOCTYPE html>';
 for (let key in releaseItems) {
     let item = releaseItems[key];
 
     let file = path.join(buildPath, item);
 
     if (fs.statSync(file).isDirectory())
-        file = path.join(file, 'index.html')
+        file = path.join(file, 'index.pug')
 
     if (
         !fs.existsSync(file)
-        || path.extname(file) !== '.html'
+        || path.extname(file) !== '.pug'
     ) {
         // not an HTML object to build
         releaseItems[key] = ''; // remove from sitemap
@@ -105,30 +104,22 @@ for (let key in releaseItems) {
     };
 
     // replace components to static element
-    let dom = new JSDOM(fs.readFileSync(file, 'utf-8'));
-    dom.window.document.querySelectorAll('[html-src]').forEach(elm => {
-        elm.innerHTML =
-            fs.readFileSync(path.join(
-                '../',
-                elm.getAttribute('html-src')
-            ))
-            + elm.innerHTML;
-        elm.removeAttribute('html-src');
-    });
+    let document = pug.compileFile(file);
 
-    // remove preview script if exists
-    dom.window.document.querySelector('script[src="/Static-Wind/preview.js"]')
-    ?.remove();
+    // remove original pug file
+    fs.rmSync(file);
+
+    // change file extention name
+    file = file.split('.');
+    file[file.length - 1] = 'html';
+    file = file.join('.');
 
     if (path.extname(item)) {
         // is a file, no translation, still proceed to copy the content down
         console.warn(`- ${item} no translation available`);
         fs.writeFileSync(
             file,
-            minify(
-                config.doctype + dom.window.document.documentElement.outerHTML,
-                config.minify
-            ),
+            minify(document(config.masterTranslation), config.minify),
             'utf-8'
         );
         continue
@@ -138,10 +129,6 @@ for (let key in releaseItems) {
         buildScript.onTranslationBuild(dom.window.document, item, config);
 
     for (const lang of languages) {
-        let data =
-            config.doctype
-            + dom.window.document.documentElement.outerHTML;
-
         // translation file
         let transFile = path.join(path.dirname(file), lang + '.json');
         if (!fs.existsSync(transFile)) {
@@ -152,21 +139,10 @@ for (let key in releaseItems) {
                 transFile,
                 'utf-8'
             ))
+        trans = { ...config.masterTranslation[lang], ...trans };
 
         // insert language code
         trans.lang_code = lang;
-
-        for (const key of Object.keys(trans)) {
-            if (['URL'].includes(key)) continue; // skip certain key
-            data = data.replace(new RegExp(key, 'g'), trans[key])
-        }
-
-        if (config.masterTranslation)
-            for (const key of Object.keys(config.masterTranslation[lang]))
-                data = data.replace(
-                    new RegExp(key, 'g'),
-                    config.masterTranslation[lang][key]
-                )
 
         // translation URL does not exit, specify as the default directory
         if (!trans.URL) trans.URL = item;
@@ -182,7 +158,7 @@ for (let key in releaseItems) {
 
         fs.writeFileSync(
             path.join(outputDir, 'index.html'),
-            minify(data, config.minify),
+            minify(document(trans), config.minify),
             'utf-8'
         );
 
