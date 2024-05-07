@@ -65,12 +65,13 @@ if (typeof(config?.masterTranslation) == 'string') {
             ))
 }
 
-let buildScript = path.join('../', config.buildScript);
-if (
-    config.buildScript
-    && fs.existsSync(buildScript)) {
-    console.log('Build script exists')
-    buildScript = require(buildScript);
+let buildScript = '';
+if (config.buildScript) {
+    buildScript = path.join('../', config.buildScript)
+    if (fs.existsSync(buildScript)) {
+        console.log('Build script exists');
+        buildScript = require(buildScript);
+    }
 }
 
 console.log('Copy release items')
