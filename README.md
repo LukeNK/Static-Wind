@@ -1,6 +1,18 @@
 # Static Wind
 A static webpage generator specifically for GitHub Page.
 
+## MIGRATING FROM v2 TO v3
+Development on the third version major of Static-Wind is on the way (check `major-version` branch). This is a **MAJOR CHANGE** with:
+- Removing `html-src` system
+- Source file being `.pug`
+- Translation will use Pug locals instead of plain-text replace
+- Build script **MAY** receive plain HTML instead of a JSDOM object
+- `preview.js` will be a server that compiled Pug files
+- Encourage to use `git submodule` (for deployment) or `git subtree` (for development)
+- Documentation on v3 new features
+
+This message will stay until the complete development of V3 (and subsequently the merge of the `major-version` branch to the `main` branch).
+
 ## How it works?
 First, it copies all of the files in the current branch to `Static-Wind/build`, which is an ignored folder. Then, it switches to the Release branch, where it resolves all `html-src`. A simple `replaceAll()` Regex will then be performed to replace all keys in the translation file with its content. After that, it commits and pushes. This is why the Release branch should be your GitHub page deploy branch.
 
@@ -17,12 +29,16 @@ There are two options to view your webpage from here:
 - Create a static server to serve the content with `npm run servePreview`, which then will serve the files with live update. This reduces the need to re-build everytime you need to change the content. The reason a static server is required is to by-pass CORS, so you can use other options and not limited to `npm run servePreview`. This also requires you to provide `Static-Wind/preview.js` at the end of every HTML file that you wish to preview.
 
 ## Features
-### `html-src` attribute
+### **[DEPRECATED IN V3]** `html-src` attribute
+*In v3, this will become Pug's includes and extend*
+
 This attribute simply specifies the path to the inner HTML that the user wishes to put it. For example, if the value is `a.html`, the script will fetch the content of `a.html` then **prepend** to the element's `innerHTML` value.
 
 *Please noted that `Static-Wind/preview.js` is known to have problems with nested `html-src` due to its asycn nature.*
 
-### Translations
+### **[MAJOR OVERHAUL]** Translations
+*In v3, translation will be included using Pug's locals (variables) AND WILL NO LONGER using plain text replace.*
+
 After setting up `Static-Wind/config.json` (with example from `Static-Wind/!config.json`), you can now set up translation of each folder. Basic structure of a translation file `<lang_code>.json` (noted that this files must be in the same level as the `index.html` file that you want this translation to applied to.):
 ```json
 {
