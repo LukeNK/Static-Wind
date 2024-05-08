@@ -7,21 +7,15 @@ First, it copies all of the files in the current branch to `Static-Wind/build`, 
 ## How to set up it?
 Git ignore the folder `Static-Wind`, then clone Static Wind into that folder. Start to build your page with a set structure by the script:
 - `pageEnglishURL`
-    - `index.html`: this file will contain the layout and translation keys
+    - `index.pug`: this file will contain the layout and translation keys
     - `en.json`: basic English interpretation of the key
     - `<lang_code>.json`: translation of the language
-    - `build.js`: scripts to call when building
 
 There are two options to view your webpage from here:
 - Build the webpage with `npm run build`, which then the result will be in the Git-ignored folder `Static-Wind/build`; or
 - Run `Static-Wind/preview.js`, which will start an Express.js server to serve the files with rendered content (from Pug to HTML).
 
 ## Features
-### `html-src` attribute
-This attribute simply specifies the path to the inner HTML that the user wishes to put it. For example, if the value is `a.html`, the script will fetch the content of `a.html` then **prepend** to the element's `innerHTML` value.
-
-*Please noted that `Static-Wind/preview.js` is known to have problems with nested `html-src` due to its asycn nature.*
-
 ### Translations
 After setting up `Static-Wind/config.json` (with example from `Static-Wind/!config.json`), you can now set up translation of each folder. Basic structure of a translation file `<lang_code>.json` (noted that this files must be in the same level as the `index.html` file that you want this translation to applied to.):
 ```json

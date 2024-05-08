@@ -1,28 +1,26 @@
-// script to allow pages to build preview with English translation as default
-(async () => {
-    // Fetch html-src to replace for preview
-    for (elm of document.querySelectorAll("[html-src]")) {
-        let res = await fetch(elm.getAttribute('html-src')).then(res => res.text());
-        elm.innerHTML = res + elm.innerHTML; // do not over write file
-    }
+const express = require('express'),
+    fs = require('fs'),
+    path = require('path'),
+    URL = require('url').URL;
+const app = express();
+const port = 8080;
 
-    // If page already has the translation, skip this setting translation
-    try {
-        // check if the language code is correct
-        Intl.getCanonicalLocales(document.body.parentElement.lang);
-        console.log('Page already has the proper language');
-    } catch(err) {
-        console.log('Translation existed');
-        let data = document.body.outerHTML,
-            config = await fetch('/Static-Wind/config.json')
-                .then(res => res.json());
+app.set('view engine', 'pug');
+app.set('views', './');
 
-        // load default language
-        let trans = await fetch(`./${config.languages[0]}.json`)
-            .then(res => res.json());
+// server URL that ends with a slash
+app.get(/\/$/, (req, res) => {
+    let url = new URL(req.url, 'https://' + req.headers.host);
+    url = path.join('.', url.pathname);
 
-        for (key of Object.keys(trans))
-            data = data.replace(new RegExp(key, 'g'), trans[key]);
-        document.body.outerHTML = data;
-    }
-})();
+    res.render(
+        path.join(url, 'index.pug')
+    )
+});
+
+// else deliver it as a static file
+app.use('/', express.static('./'));
+
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`)
+})
