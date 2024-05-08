@@ -26,7 +26,7 @@ Git ignore the folder `Static-Wind`, then clone Static Wind into that folder. St
 
 There are two options to view your webpage from here:
 - Build the webpage with `npm run build`, which then the result will be in the Git-ignored folder `Static-Wind/build`; or
-- Create a static server to serve the content with `npm run servePreview`, which then will serve the files with live update. This reduces the need to re-build everytime you need to change the content. The reason a static server is required is to by-pass CORS, so you can use other options and not limited to `npm run servePreview`. This also requires you to provide `Static-Wind/preview.js` at the end of every HTML file that you wish to preview.
+- **[DEPRECATED IN V3]** Create a static server to serve the content with `npm run servePreview`, which then will serve the files with live update. This reduces the need to re-build everytime you need to change the content. The reason a static server is required is to by-pass CORS, so you can use other options and not limited to `npm run servePreview`. This also requires you to provide `Static-Wind/preview.js` at the end of every HTML file that you wish to preview.
 
 ## Features
 ### **[DEPRECATED IN V3]** `html-src` attribute
