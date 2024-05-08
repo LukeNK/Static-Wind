@@ -14,7 +14,8 @@ app.get(/\/$/, (req, res) => {
     url = path.join('.', url.pathname);
 
     res.render(
-        path.join(url, 'index.pug')
+        path.join(url, 'index.pug'),
+        {basedir: '.'}
     )
 });
 
