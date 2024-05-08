@@ -104,7 +104,7 @@ for (let key in releaseItems) {
     };
 
     // replace components to static element
-    let document = pug.compileFile(file);
+    let document = pug.compileFile(file, {basedir: '../'});
 
     // remove original pug file
     fs.rmSync(file);
@@ -144,16 +144,16 @@ for (let key in releaseItems) {
         // insert language code
         trans.lang_code = lang;
 
-        // translation URL does not exit, specify as the default directory
-        if (!trans.URL) trans.URL = item;
+        // translation pageURL does not exit, specify as the default directory
+        if (!trans.pageURL) trans.pageURL = item;
 
-        let outputDir = path.join(buildPath, trans.URL); // output directory
+        let outputDir = path.join(buildPath, trans.pageURL); // output directory
         if (
             file != outputDir // if the current folder is not the original folder
             && !fs.existsSync(outputDir) // and the folder does not exist
         ) {
             fs.mkdirSync(outputDir)
-            releaseItems.push(trans.URL); // add to copy to release
+            releaseItems.push(trans.pageURL); // add to copy to release
         }
 
         fs.writeFileSync(
