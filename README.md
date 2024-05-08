@@ -2,13 +2,12 @@
 A static webpage generator specifically for GitHub Page.
 
 ## How it works?
-First, it copies all of the files in the current branch to `Static-Wind/build`, which is an ignored folder. Then, it switches to the Release branch, where it resolves all `html-src`. A simple `replaceAll()` Regex will then be performed to replace all keys in the translation file with its content. After that, it commits and pushes. This is why the Release branch should be your GitHub page deploy branch.
+First, it copies all of the files into `/build/` directory. After that, the script will inject translation variables and render the Pug files. A sitemap file will be generated and the script will committ the repository if the `-R` flag is specified.
 
 ## How to set up it?
 Git ignore the folder `Static-Wind`, then clone Static Wind into that folder. Start to build your page with a set structure by the script:
-- `pageEnglishURL`
+- `pageStandardURL`
     - `index.pug`: this file will contain the layout and translation keys
-    - `en.json`: basic English interpretation of the key
     - `<lang_code>.json`: translation of the language
 
 There are two options to view your webpage from here:
