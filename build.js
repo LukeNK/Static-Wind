@@ -5,7 +5,7 @@ const fs = require('fs'),
     minify = require('html-minifier').minify;
 
 const argv = process.argv.slice(2),
-    cPath = 'config.json', // build config
+    cPath = path.join('../', '.Static-Wind.json'), // build config
     vPath = 'VERSION', // version path OF THE WEBSITE
     buildPath = 'build';
 
@@ -129,7 +129,7 @@ for (let key in releaseItems) {
     }
 
     if (buildScript?.onTranslationBuild)
-        buildScript.onTranslationBuild(dom.window.document, item, config);
+        buildScript.onTranslationBuild(item, config);
 
     for (const lang of languages) {
         // translation file

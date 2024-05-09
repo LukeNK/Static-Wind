@@ -2,13 +2,15 @@
 A static webpage generator specifically for GitHub Page.
 
 ## How it works?
-First, it copies all of the files into `/build/` directory. After that, the script will inject translation variables and render the Pug files. A sitemap file will be generated and the script will committ the repository if the `-R` flag is specified.
+First, it copies all of the files into `/build/` directory. After that, the script will inject translation variables and render the Pug files. A sitemap file will be generated and the script will commit the repository if the `-R` flag is specified.
 
 ## How to set up it?
-Git ignore the folder `Static-Wind`, then clone Static Wind into that folder. Start to build your page with a set structure by the script:
+Use `git submodule` (to use one specific Static Wind commit) or `git subtree` (for development) to get Static Wind at your root folder. Start to build your page with a set structure by the script:
 - `pageStandardURL`
     - `index.pug`: this file will contain the layout and translation keys
     - `<lang_code>.json`: translation of the language
+
+After that, create a configuration file at the root folder **of the project** with the name `.Static-Wind.json` (an example is available at `!config.json`)
 
 There are two options to view your webpage from here:
 - Build the webpage with `npm run build`, which then the result will be in the Git-ignored folder `Static-Wind/build`; or
