@@ -5,8 +5,8 @@ const fs = require('fs'),
     minify = require('html-minifier').minify;
 
 const argv = process.argv.slice(2),
-    cPath = path.join('../', '.Static-Wind.json'), // build config
-    vPath = 'VERSION', // version path OF THE WEBSITE
+    cPath = path.join('..', '.Static-Wind.json'), // build config
+    vPath = path.join('..', 'VERSION'), // version path OF THE WEBSITE
     buildPath = 'build';
 
 if (!fs.existsSync(vPath))
