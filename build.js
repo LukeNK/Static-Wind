@@ -103,8 +103,11 @@ for (let key in releaseItems) {
         continue
     };
 
-    // replace components to static element
-    let document = pug.compileFile(file, {basedir: '../'});
+    // load document using fs to cache the file
+    let document = pug.compile(
+        fs.readFileSync(file, 'utf-8'),
+        {basedir: '../'}
+    );
 
     // remove original pug file
     fs.rmSync(file);
