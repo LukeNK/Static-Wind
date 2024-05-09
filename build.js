@@ -122,7 +122,10 @@ for (let key in releaseItems) {
         console.warn(`- ${item} no translation available`);
         fs.writeFileSync(
             file,
-            minify(document(config.masterTranslation), config.minify),
+            minify(document({
+                ...config.masterTranslation,
+                config: config
+            }), config.minify),
             'utf-8'
         );
         continue
@@ -161,7 +164,10 @@ for (let key in releaseItems) {
 
         fs.writeFileSync(
             path.join(outputDir, 'index.html'),
-            minify(document(trans), config.minify),
+            minify(document({
+                ...trans,
+                config: config
+            }), config.minify),
             'utf-8'
         );
 
