@@ -1,5 +1,4 @@
 const express = require('express'),
-    fs = require('fs'),
     path = require('path'),
     URL = require('url').URL;
 const app = express();
