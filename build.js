@@ -92,16 +92,14 @@ for (let key in releaseItems) {
     let file = path.join(buildPath, item);
 
     if (fs.statSync(file).isDirectory())
-        file = path.join(file, 'index.pug')
-
-    if (
-        !fs.existsSync(file)
-        || path.extname(file) !== '.pug'
-    ) {
-        // not an HTML object to build
-        releaseItems[key] = ''; // remove from sitemap
-        continue
-    };
+        if (fs.existsSync(path.join(file, 'index.html')))
+            continue; // skip but still keep in sitemap
+        else if (fs.existsSync(path.join(file, 'index.pug')))
+            file = path.join(file, 'index.pug') // change to Pug to build
+        else {
+            releaseItems[key] = ''; //remove from sitemap
+            continue
+        }
 
     // load document using fs to cache the file
     let document = pug.compile(
@@ -182,9 +180,11 @@ if (config.sitemap) {
         ),
         out = '';
     console.log('Generating sitemap at ' + sitemap)
-    for (const item of releaseItems)
+    for (let item of releaseItems) {
+        if (item.startsWith('/')) item = item.slice(1); // remove absolute path
         if (item) // if items exists and is allowed in sitemap
             out += config.sitemap + item + '\n';
+    }
     fs.writeFileSync(sitemap, out, 'utf-8')
 }
 
