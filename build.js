@@ -100,6 +100,8 @@ for (let key in releaseItems) {
             releaseItems[key] = ''; //remove from sitemap
             continue
         }
+    else if (path.extname(file) == '.pug')
+        releaseItems[key] = '' // remove from sitemap because it is a file, not an URL
 
     // load document using fs to cache the file
     let document = pug.compile(
