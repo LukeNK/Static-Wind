@@ -1,6 +1,9 @@
 const express = require('express'),
     path = require('path'),
     URL = require('url').URL;
+
+const staticwindConfig = require('../.Static-Wind.json');
+
 const app = express();
 const port = 8080;
 
@@ -14,7 +17,10 @@ app.get(/\/$/, (req, res) => {
 
     res.render(
         path.join(url, 'index.pug'),
-        {basedir: '.'}
+        {
+            basedir: '.',
+            config: staticwindConfig,
+        }
     )
 });
 
