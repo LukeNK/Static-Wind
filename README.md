@@ -18,7 +18,7 @@ There are two options to view your webpage from here:
 
 ## Features
 ### Translations
-After setting up `Static-Wind/config.json` (with example from `Static-Wind/!config.json`), you can now set up translation of each folder. Basic structure of a translation file `<lang_code>.json` (noted that this files must be in the same level as the `index.html` file that you want this translation to applied to.):
+After setting up `.Static-Wind.json` (with example from `Static-Wind/!config.json`), you can now set up translation of each folder. Basic structure of a translation file `<lang_code>.json` (noted that this files must be in the same level as the `index.html` file that you want this translation to applied to.):
 ```json
 {
     "URL": "The folder/URL of this translation that you want people to access",
