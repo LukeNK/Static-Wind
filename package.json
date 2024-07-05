@@ -4,10 +4,8 @@
   "description": "Static web deploy script to be used along with GitHub Page",
   "main": "build/build.js",
   "scripts": {
-    "servePreview": "cd ../ && node Static-Wind/preview.js",
-    "build": "node build.js",
-    "serveBuild": "cd ./build && npx http-server ./",
-    "test": "npm run build && npm run serveBuild"
+    "preview": "cd ../ && node Static-Wind/preview.js",
+    "build": "node build.js"
   },
   "repository": {
     "type": "git",
