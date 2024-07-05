@@ -6,17 +6,14 @@ const fs = require('fs'),
 
 const argv = process.argv.slice(2),
     cPath = path.join('..', '.Static-Wind.json'), // build config
-    vPath = path.join('..', 'VERSION'), // version path OF THE WEBSITE
-    buildPath = 'build';
+    vPath = path.join('..', 'VERSION'); // version path OF THE WEBSITE
 
-if (!fs.existsSync(vPath))
-    fs.writeFileSync(vPath, '0.0', 'utf-8'); // create placeholder
-
-let version = fs.readFileSync(vPath, 'utf-8').split('.');
 let config = JSON.parse(fs.readFileSync(cPath, 'utf-8'));
 
-const releaseItems = config.releaseItems,
+const buildPath = path.join('..', config.buildPath || 'build'),
+    releaseItems = config.releaseItems,
     languages = config.languages;
+config.buildPath = buildPath; // re-apply to pass to build scripts
 config.minify =
     config.minify
     || {
@@ -27,10 +24,15 @@ config.minify =
     };
 
 if (!fs.existsSync('build.js')) {
-    console.error('Not at Static-Wind folder');
+    console.error('Script did not invoked at Static-Wind folder');
     process.exit(1);
 }
 
+// dealing with version
+if (!fs.existsSync(vPath))
+    fs.writeFileSync(vPath, '0.0', 'utf-8'); // create placeholder
+
+let version = fs.readFileSync(vPath, 'utf-8').split('.');
 if (argv[0] === 'R') {
     console.log('Release flag, increasing version');
     let curYear = new Date().getFullYear().toString().slice(2);
