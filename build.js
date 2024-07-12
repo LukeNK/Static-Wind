@@ -5,12 +5,12 @@ const fs = require('fs'),
     minify = require('html-minifier').minify;
 
 const argv = process.argv.slice(2),
-    cPath = path.join('..', '.Static-Wind.json'), // build config
-    vPath = path.join('..', 'VERSION'); // version path OF THE WEBSITE
+    cPath = path.join('..', '.Static-Wind.json'); // build config
 
 let config = JSON.parse(fs.readFileSync(cPath, 'utf-8'));
 
 const buildPath = path.join('..', config.buildPath || 'build'),
+    vPath = path.join('..', config.buildVersion || 'VERSION'); // version path
     releaseItems = config.releaseItems,
     languages = config.languages;
 config.buildPath = buildPath; // re-apply to pass to build scripts
@@ -51,7 +51,10 @@ if (argv[0] === 'R') {
 console.log('Cleaning ' + buildPath)
 if (fs.existsSync(buildPath))
     for (const item of fs.readdirSync(buildPath)) {
-        if (item == '.git') continue;
+        if (
+            item == '.git'
+            || item == 'VERSION'
+        ) continue;
         fs.rmSync(path.join(buildPath, item), { recursive: true, force: true })
     }
 
@@ -199,7 +202,7 @@ if (!config.release) {
     process.exit(0);
 }
 
-console.log('Git add all changes');
+console.log('Git add ' + buildPath);
 console.log(execSync(`cd ${buildPath} && git add .`, { encoding: 'utf-8' }));
 
 console.log('Git commit');
