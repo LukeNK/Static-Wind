@@ -14,32 +14,23 @@ Development on the third version major of Static-Wind is on the way (check `majo
 This message will stay until the complete development of V3 (and subsequently the merge of the `major-version` branch to the `main` branch).
 
 ## How it works?
-First, it copies all of the files in the current branch to `Static-Wind/build`, which is an ignored folder. Then, it switches to the Release branch, where it resolves all `html-src`. A simple `replaceAll()` Regex will then be performed to replace all keys in the translation file with its content. After that, it commits and pushes. This is why the Release branch should be your GitHub page deploy branch.
+First, it copies all of the files into `/build/` directory. After that, the script will inject translation variables and render the Pug files. A sitemap file will be generated and the script will commit the repository if the `-R` flag is specified.
 
 ## How to set up it?
-Git ignore the folder `Static-Wind`, then clone Static Wind into that folder. Start to build your page with a set structure by the script:
-- `pageEnglishURL`
-    - `index.html`: this file will contain the layout and translation keys
-    - `en.json`: basic English interpretation of the key
+Use `git submodule` (to use one specific Static Wind commit) or `git subtree` (for development) to get Static Wind at your root folder. Start to build your page with a set structure by the script:
+- `pageStandardURL`
+    - `index.pug`: this file will contain the layout and translation keys
     - `<lang_code>.json`: translation of the language
-    - `build.js`: scripts to call when building
+
+After that, create a configuration file at the root folder **of the project** with the name `.Static-Wind.json` (an example is available at `!config.json`)
 
 There are two options to view your webpage from here:
 - Build the webpage with `npm run build`, which then the result will be in the Git-ignored folder `Static-Wind/build`; or
-- **[DEPRECATED IN V3]** Create a static server to serve the content with `npm run servePreview`, which then will serve the files with live update. This reduces the need to re-build everytime you need to change the content. The reason a static server is required is to by-pass CORS, so you can use other options and not limited to `npm run servePreview`. This also requires you to provide `Static-Wind/preview.js` at the end of every HTML file that you wish to preview.
+- Run `Static-Wind/preview.js`, which will start an Express.js server to serve the files with rendered content (from Pug to HTML).
 
 ## Features
-### **[DEPRECATED IN V3]** `html-src` attribute
-*In v3, this will become Pug's includes and extend*
-
-This attribute simply specifies the path to the inner HTML that the user wishes to put it. For example, if the value is `a.html`, the script will fetch the content of `a.html` then **prepend** to the element's `innerHTML` value.
-
-*Please noted that `Static-Wind/preview.js` is known to have problems with nested `html-src` due to its asycn nature.*
-
-### **[MAJOR OVERHAUL]** Translations
-*In v3, translation will be included using Pug's locals (variables) AND WILL NO LONGER using plain text replace.*
-
-After setting up `Static-Wind/config.json` (with example from `Static-Wind/!config.json`), you can now set up translation of each folder. Basic structure of a translation file `<lang_code>.json` (noted that this files must be in the same level as the `index.html` file that you want this translation to applied to.):
+### Translations
+After setting up `.Static-Wind.json` (with example from `Static-Wind/!config.json`), you can now set up translation of each folder. Basic structure of a translation file `<lang_code>.json` (noted that this files must be in the same level as the `index.html` file that you want this translation to applied to.):
 ```json
 {
     "URL": "The folder/URL of this translation that you want people to access",

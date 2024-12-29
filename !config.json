@@ -1,10 +1,14 @@
 {
     "languages": ["en", "vi"],
     "masterTranslation": "Path to the folder where all translations in that folder will be applied for the entire website.",
+
+    "buildPath": "The path where Static Wind will put the built result to",
     "buildScript": "The path of the build script",
-    "doctype": "Document doctype to be inserted at the front of any HTML, default to the default doctype",
+    "buildVersion": "The path to the file that track build version",
+
     "sitemap": "Put the base url here to generate a sitemap.txt file at the root folder",
     "sitemapPath": "The path of the sitemap relative to build path or default at /sitemap.txt",
+
     "releaseItems": [
         "Path to folder/files that need to be released"
     ]

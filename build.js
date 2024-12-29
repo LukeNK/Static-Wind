@@ -1,22 +1,19 @@
 const fs = require('fs'),
     path = require('path'),
     execSync = require('child_process').execSync,
-    { JSDOM } = require("jsdom"),
+    pug = require('pug'),
     minify = require('html-minifier').minify;
 
 const argv = process.argv.slice(2),
-    cPath = 'config.json', // build config
-    vPath = 'VERSION', // version path OF THE WEBSITE
-    buildPath = 'build';
+    cPath = path.join('..', '.Static-Wind.json'); // build config
 
-if (!fs.existsSync(vPath))
-    fs.writeFileSync(vPath, '0.0', 'utf-8'); // create placeholder
-
-let version = fs.readFileSync(vPath, 'utf-8').split('.');
 let config = JSON.parse(fs.readFileSync(cPath, 'utf-8'));
 
-const releaseItems = config.releaseItems,
+const buildPath = path.join('..', config.buildPath || 'build'),
+    vPath = path.join('..', config.buildVersion || 'VERSION'); // version path
+    releaseItems = config.releaseItems,
     languages = config.languages;
+config.buildPath = buildPath; // re-apply to pass to build scripts
 config.minify =
     config.minify
     || {
@@ -27,10 +24,15 @@ config.minify =
     };
 
 if (!fs.existsSync('build.js')) {
-    console.error('Not at Static-Wind folder');
+    console.error('Script did not invoked at Static-Wind folder');
     process.exit(1);
 }
 
+// dealing with version
+if (!fs.existsSync(vPath))
+    fs.writeFileSync(vPath, '0.0', 'utf-8'); // create placeholder
+
+let version = fs.readFileSync(vPath, 'utf-8').split('.');
 if (argv[0] === 'R') {
     console.log('Release flag, increasing version');
     let curYear = new Date().getFullYear().toString().slice(2);
@@ -49,7 +51,10 @@ if (argv[0] === 'R') {
 console.log('Cleaning ' + buildPath)
 if (fs.existsSync(buildPath))
     for (const item of fs.readdirSync(buildPath)) {
-        if (item == '.git') continue;
+        if (
+            item == '.git'
+            || item == 'VERSION'
+        ) continue;
         fs.rmSync(path.join(buildPath, item), { recursive: true, force: true })
     }
 
@@ -86,62 +91,55 @@ releaseItems.forEach((item, key) => {
 if (buildScript?.onBuild) buildScript.onBuild(config);
 
 console.log('Build release items');
-config.doctype = config.doctype || '<!DOCTYPE html>';
 for (let key in releaseItems) {
     let item = releaseItems[key];
 
     let file = path.join(buildPath, item);
 
     if (fs.statSync(file).isDirectory())
-        file = path.join(file, 'index.html')
+        if (fs.existsSync(path.join(file, 'index.html')))
+            continue; // skip but still keep in sitemap
+        else if (fs.existsSync(path.join(file, 'index.pug')))
+            file = path.join(file, 'index.pug') // change to Pug to build
+        else {
+            releaseItems[key] = ''; //remove from sitemap
+            continue
+        }
+    else if (path.extname(file) == '.pug')
+        releaseItems[key] = '' // remove from sitemap because it is a file, not an URL
 
-    if (
-        !fs.existsSync(file)
-        || path.extname(file) !== '.html'
-    ) {
-        // not an HTML object to build
-        releaseItems[key] = ''; // remove from sitemap
-        continue
-    };
+    // load document using fs to cache the file
+    let document = pug.compile(
+        fs.readFileSync(file, 'utf-8'),
+        {basedir: '../'}
+    );
 
-    // replace components to static element
-    let dom = new JSDOM(fs.readFileSync(file, 'utf-8'));
-    dom.window.document.querySelectorAll('[html-src]').forEach(elm => {
-        elm.innerHTML =
-            fs.readFileSync(path.join(
-                '../',
-                elm.getAttribute('html-src')
-            ))
-            + elm.innerHTML;
-        elm.removeAttribute('html-src');
-    });
+    // remove original pug file
+    fs.rmSync(file);
 
-    // remove preview script if exists
-    dom.window.document.querySelector('script[src="/Static-Wind/preview.js"]')
-    ?.remove();
+    // change file extention name
+    file = file.split('.');
+    file[file.length - 1] = 'html';
+    file = file.join('.');
 
     if (path.extname(item)) {
         // is a file, no translation, still proceed to copy the content down
         console.warn(`- ${item} no translation available`);
         fs.writeFileSync(
             file,
-            minify(
-                config.doctype + dom.window.document.documentElement.outerHTML,
-                config.minify
-            ),
+            minify(document({
+                ...config.masterTranslation,
+                config: config
+            }), config.minify),
             'utf-8'
         );
         continue
     }
 
     if (buildScript?.onTranslationBuild)
-        buildScript.onTranslationBuild(dom.window.document, item, config);
+        buildScript.onTranslationBuild(item, config);
 
     for (const lang of languages) {
-        let data =
-            config.doctype
-            + dom.window.document.documentElement.outerHTML;
-
         // translation file
         let transFile = path.join(path.dirname(file), lang + '.json');
         if (!fs.existsSync(transFile)) {
@@ -152,37 +150,29 @@ for (let key in releaseItems) {
                 transFile,
                 'utf-8'
             ))
+        trans = { ...config.masterTranslation[lang], ...trans };
 
         // insert language code
         trans.lang_code = lang;
 
-        for (const key of Object.keys(trans)) {
-            if (['URL'].includes(key)) continue; // skip certain key
-            data = data.replace(new RegExp(key, 'g'), trans[key])
-        }
+        // translation pageURL does not exit, specify as the default directory
+        if (!trans.pageURL) trans.pageURL = item;
 
-        if (config.masterTranslation)
-            for (const key of Object.keys(config.masterTranslation[lang]))
-                data = data.replace(
-                    new RegExp(key, 'g'),
-                    config.masterTranslation[lang][key]
-                )
-
-        // translation URL does not exit, specify as the default directory
-        if (!trans.URL) trans.URL = item;
-
-        let outputDir = path.join(buildPath, trans.URL); // output directory
+        let outputDir = path.join(buildPath, trans.pageURL); // output directory
         if (
             file != outputDir // if the current folder is not the original folder
             && !fs.existsSync(outputDir) // and the folder does not exist
         ) {
             fs.mkdirSync(outputDir)
-            releaseItems.push(trans.URL); // add to copy to release
+            releaseItems.push(trans.pageURL); // add to copy to release
         }
 
         fs.writeFileSync(
             path.join(outputDir, 'index.html'),
-            minify(data, config.minify),
+            minify(document({
+                ...trans,
+                config: config
+            }), config.minify),
             'utf-8'
         );
 
@@ -197,9 +187,15 @@ if (config.sitemap) {
         ),
         out = '';
     console.log('Generating sitemap at ' + sitemap)
-    for (const item of releaseItems)
-        if (item) // if items exists and is allowed in sitemap
-            out += config.sitemap + item + '\n';
+    for (let item of releaseItems) {
+        if (item.startsWith('/')) item = item.slice(1); // remove absolute path
+        if (item) {
+            // if items exists and is allowed in sitemap
+            out += config.sitemap + item;
+            if (!path.extname(item)) out += '/'; // directory
+            out += '\n';
+        }
+    }
     fs.writeFileSync(sitemap, out, 'utf-8')
 }
 
@@ -210,7 +206,7 @@ if (!config.release) {
     process.exit(0);
 }
 
-console.log('Git add all changes');
+console.log('Git add ' + buildPath);
 console.log(execSync(`cd ${buildPath} && git add .`, { encoding: 'utf-8' }));
 
 console.log('Git commit');
