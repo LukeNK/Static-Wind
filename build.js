@@ -189,8 +189,12 @@ if (config.sitemap) {
     console.log('Generating sitemap at ' + sitemap)
     for (let item of releaseItems) {
         if (item.startsWith('/')) item = item.slice(1); // remove absolute path
-        if (item) // if items exists and is allowed in sitemap
-            out += config.sitemap + item + '\n';
+        if (item) {
+            // if items exists and is allowed in sitemap
+            out += config.sitemap + item;
+            if (!path.extname(item)) out += '/'; // directory
+            out += '\n';
+        }
     }
     fs.writeFileSync(sitemap, out, 'utf-8')
 }
