@@ -1,19 +1,7 @@
 # Static Wind
 A static webpage generator specifically for GitHub Page.
 
-## MIGRATING FROM v2 TO v3
-Development on the third version major of Static-Wind is on the way (check `major-version` branch). This is a **MAJOR CHANGE** with:
-- Removing `html-src` system
-- Source file being `.pug`
-- Translation will use Pug locals instead of plain-text replace
-- Build script **MAY** receive plain HTML instead of a JSDOM object
-- `preview.js` will be a server that compiled Pug files
-- Encourage to use `git submodule` (for deployment) or `git subtree` (for development)
-- Documentation on v3 new features
-
-This message will stay until the complete development of V3 (and subsequently the merge of the `major-version` branch to the `main` branch).
-
-## How it works?
+## How does it work?
 First, it copies all of the files into `/build/` directory. After that, the script will inject translation variables and render the Pug files. A sitemap file will be generated and the script will commit the repository if the `-R` flag is specified.
 
 ## How to set up it?
